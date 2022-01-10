@@ -1,8 +1,4 @@
-use actix::{
-    Actor, ActorContext, ActorTryFutureExt, Addr, AsyncContext, Context, ContextFutureSpawner,
-    Handler, Message, WrapFuture,
-};
-use actix_service::Service;
+use actix::{Actor, ActorContext, Addr, Context, Handler, Message};
 use log::info;
 
 use crate::write::{WriteActor, WriteMessage};

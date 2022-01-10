@@ -1,5 +1,4 @@
 use actix::{Actor, Addr, Context, StreamHandler};
-use actix_service::Service;
 use log::info;
 use tokio_util::codec::LinesCodecError;
 

@@ -1,9 +1,8 @@
 use std::task::Poll;
 
-use actix::{Actor, AsyncContext, Context};
+use actix::{Actor, AsyncContext};
 use actix::io::FramedWrite;
 use actix_service::{Service, ServiceFactory};
-use anyhow::anyhow;
 use futures::future::{ok, Ready};
 use tokio::net::TcpStream;
 use tokio_util::codec::{FramedRead, LinesCodec};
@@ -27,7 +26,7 @@ impl Service<TcpStream> for ActorService {
         let (read, write) = req.into_split();
         ReadActor::create(|c1| {
             c1.add_stream(FramedRead::new(read, LinesCodec::new()));
-            let echo = EchoActor::create(|c2| {
+            let echo = EchoActor::create(|_| {
                 let write = WriteActor::create(|c3| {
                     let write = FramedWrite::new(write, LinesCodec::new(), c3);
                     WriteActor::new(write)

@@ -1,11 +1,8 @@
-use std::net::TcpListener;
-
 use actix_server::Server;
 use anyhow::anyhow;
 use log::info;
-use tokio::net::TcpStream;
 
-use crate::service::{ActorService, ActorServiceFactory};
+use crate::service::ActorServiceFactory;
 
 mod echo;
 mod read;
@@ -14,18 +11,15 @@ mod write;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    match std::env::var("RUST_LOG") {
-        Err(_) => std::env::set_var("RUST_LOG", "DEBUG"),
-        _ => {}
+    if let Err(_) = std::env::var("RUST_LOG") {
+        std::env::set_var("RUST_LOG", "DEBUG");
     }
     env_logger::init();
 
     let address = "127.0.0.1:8000";
-    let listener = TcpListener::bind(address).map_err(|e| anyhow!(e))?;
     info!("Server bind at: {}", address);
-
     Server::build()
-        .listen("actix-server", listener, || ActorServiceFactory)
+        .bind("actix-server", address, || ActorServiceFactory)
         .map_err(|e| anyhow!(e))?
         .run()
         .await
